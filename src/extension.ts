@@ -116,7 +116,7 @@ function getWebviewContent(cspSource: string, imageSrc: string, line: string): s
 <style>
   html, body {
     height: 100%;
-    margin: 0;
+    margin: 1;
     background: transparent;
     overflow: hidden;
   }
