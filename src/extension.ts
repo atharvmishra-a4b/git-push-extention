@@ -56,7 +56,10 @@ export function activate(context: vscode.ExtensionContext) {
     }
 
     repo.state.onDidChange(() => {
+      console.log('Push Celebration: onDidChange fired');
       const head = repo.state.HEAD;
+      console.log(`Push Celebration: HEAD=${head?.name}, ahead=${head?.ahead}`);
+      
       if (!head || !head.name) {
         console.log('Push Celebration: no HEAD or branch name');
         return;
@@ -66,13 +69,13 @@ export function activate(context: vscode.ExtensionContext) {
       const ahead = head.ahead ?? 0;
       const prev = previousAhead.get(key) ?? -1;
 
-      console.log(`Push Celebration: onDidChange - branch='${key}', prev ahead=${prev}, current ahead=${ahead}`);
+      console.log(`Push Celebration: branch='${key}', prev ahead=${prev}, current ahead=${ahead}`);
 
       // Trigger if:
       // 1. ahead count drops to 0 (prev > 0 and ahead === 0)
       // 2. OR if ahead is 0 and was previously undefined/unknown (first time seeing this branch)
       if ((prev > 0 && ahead === 0) || (prev === -1 && ahead === 0)) {
-        console.log('Push Celebration: detected potential push');
+        console.log('Push Celebration: TRIGGERED - celebrating now!');
         triggerPushCelebration(context);
       }
       previousAhead.set(key, ahead);
