@@ -44,6 +44,7 @@ export function activate(context: vscode.ExtensionContext) {
   const git = gitExtension.getAPI(1);
 
   function watchRepo(repo: Repository) {
+    console.log('Push Celebration: watching repo');
     repo.state.onDidChange(() => {
       const head = repo.state.HEAD;
       if (!head || !head.name) return;
@@ -52,8 +53,11 @@ export function activate(context: vscode.ExtensionContext) {
       const ahead = head.ahead ?? 0;
       const prev = previousAhead.get(key) ?? 0;
 
+      console.log(`Push Celebration: branch='${key}', prev ahead=${prev}, current ahead=${ahead}`);
+
       // "ahead" count drops to 0 right after a successful push.
       if (prev > 0 && ahead === 0) {
+        console.log('Push Celebration: detected push (ahead dropped to 0)');
         triggerPushCelebration(context);
       }
       previousAhead.set(key, ahead);
