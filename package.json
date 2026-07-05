@@ -1,0 +1,32 @@
+{
+  "name": "push-celebration",
+  "displayName": "Push Celebration",
+  "description": "Plays a sound and shows an animated popup every time you push code",
+  "version": "0.0.1",
+  "publisher": "CHANGE_ME",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": ["Other"],
+  "activationEvents": ["onStartupFinished", "onCommand:pushCelebration.test"],
+  "main": "./out/extension.js",
+  "extensionDependencies": ["vscode.git"],
+  "contributes": {
+    "commands": [
+      {
+        "command": "pushCelebration.test",
+        "title": "Push Celebration: Run Test Celebration"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.85.0",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.4.0"
+  }
+}
