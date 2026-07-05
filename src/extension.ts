@@ -35,29 +35,44 @@ const funnyLines = [
 const previousAhead = new Map<string, number>();
 
 export function activate(context: vscode.ExtensionContext) {
+  console.log('Push Celebration: extension activated');
   const gitExtension = vscode.extensions.getExtension<GitExtension>('vscode.git')?.exports;
   if (!gitExtension) {
     console.log('Push Celebration: vscode.git extension not found.');
     return;
   }
 
+  console.log('Push Celebration: git extension found, getting API');
   const git = gitExtension.getAPI(1);
+  console.log('Push Celebration: found', git.repositories.length, 'repositories');
 
   function watchRepo(repo: Repository) {
     console.log('Push Celebration: watching repo');
+    
+    // Check initial state
+    const head = repo.state.HEAD;
+    if (head?.name) {
+      console.log(`Push Celebration: initial state - branch='${head.name}', ahead=${head.ahead ?? 0}`);
+    }
+
     repo.state.onDidChange(() => {
       const head = repo.state.HEAD;
-      if (!head || !head.name) return;
+      if (!head || !head.name) {
+        console.log('Push Celebration: no HEAD or branch name');
+        return;
+      }
 
       const key = head.name;
       const ahead = head.ahead ?? 0;
-      const prev = previousAhead.get(key) ?? 0;
+      const prev = previousAhead.get(key) ?? -1;
 
-      console.log(`Push Celebration: branch='${key}', prev ahead=${prev}, current ahead=${ahead}`);
+      console.log(`Push Celebration: onDidChange - branch='${key}', prev ahead=${prev}, current ahead=${ahead}`);
 
-      // "ahead" count drops to 0 right after a successful push.
-      if (prev > 0 && ahead === 0) {
-        console.log('Push Celebration: detected push (ahead dropped to 0)');
+      // Trigger if:
+      // 1. ahead count drops to 0 (prev > 0 and ahead === 0)
+      // 2. OR if ahead is 0 and was previously undefined/unknown (first time seeing this branch)
+      if ((prev > 0 && ahead === 0) || (prev === -1 && ahead === 0)) {
+        console.log('Push Celebration: detected potential push');
         triggerPushCelebration(context);
       }
       previousAhead.set(key, ahead);
