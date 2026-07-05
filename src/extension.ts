@@ -71,7 +71,7 @@ export function activate(context: vscode.ExtensionContext) {
 
       console.log(`Push Celebration: branch='${key}', prev ahead=${prev}, current ahead=${ahead}`);
 
-      // Trigger if:
+      // Trigger if
       // 1. ahead count drops to 0 (prev > 0 and ahead === 0)
       // 2. OR if ahead is 0 and was previously undefined/unknown (first time seeing this branch)
       if ((prev > 0 && ahead === 0) || (prev === -1 && ahead === 0)) {
